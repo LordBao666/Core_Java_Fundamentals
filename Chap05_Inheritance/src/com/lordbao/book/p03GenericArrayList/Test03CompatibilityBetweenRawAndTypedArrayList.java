@@ -17,11 +17,10 @@ public class Test03CompatibilityBetweenRawAndTypedArrayList {
 //         staff.add(a1);
 //         staff.add(a2);
 //         staff.add(a3);
-
-
-//         ArrayList<Object> b =staff;
-//         ArrayList c = staff;
-
+//
+//         ArrayList<Object> b =staff; //error,since Employee is not Object
+//         ArrayList c = staff;//For grammar,it is ok here,but not recommended since you cannot use Employee's method directly
+//
 
         ArrayList staff = new ArrayList<>();
         var a1 = new Employee("a1",1000,1990,3,3);
@@ -33,7 +32,8 @@ public class Test03CompatibilityBetweenRawAndTypedArrayList {
         staff.add(a3);
         staff.add(a4);
 
-        ArrayList<Employee> a = staff;
+        ArrayList<Employee> staff1 = staff;//For grammar,it is ok here,However if one instance in staff1 is not Employee,it may yield an error
+//        Employee ep = staff1.get(staff.size() - 1); //ClassCastException:Object cannot be cast to Employee
 
 
     }
