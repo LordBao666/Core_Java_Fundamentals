@@ -20,14 +20,14 @@ public class TextFileTest
       staff[2] = new Employee("Tony Tester", 40000, 1990, 3, 15);
 
       // save all employee records to the file employee.dat
-      try (var out = new PrintWriter("employee.dat", StandardCharsets.UTF_8))
+      try (var out = new PrintWriter("V202-InputOutput/resources/employee.dat", StandardCharsets.UTF_8))
       {         
          writeData(staff, out);
       }
       
       // retrieve all records into a new array
       try (var in = new Scanner(
-            new FileInputStream("employee.dat"), StandardCharsets.UTF_8))
+            new FileInputStream("V202-InputOutput/resources/employee.dat"), StandardCharsets.UTF_8))
       {
          Employee[] newStaff = readData(in);
 
