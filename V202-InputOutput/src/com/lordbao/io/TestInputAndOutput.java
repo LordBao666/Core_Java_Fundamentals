@@ -3,6 +3,7 @@ package com.lordbao.io;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -14,8 +15,8 @@ import java.util.stream.Stream;
  * @Author Lord_Bao
  * @Date 2024/5/31 18:17
  * @Version 1.0
- *
- *
+ * <p>
+ * <p>
  * In java.io, the relative path is based on the starting point of
  * the current working directory,which you can find out by calling
  * System.getProperty("user.dir")
@@ -36,18 +37,18 @@ public class TestInputAndOutput {
 //        }
 
         //how to copy a file in java 8 by FileInputStream and FileOutputStream
-        try(FileInputStream fis = new FileInputStream(inputFile);
-            FileOutputStream fos = new FileOutputStream(outputFile);
-        ){
-            final   int packetLen = 16;
-            byte [] bufferArr = new byte[packetLen];
-            int readLen=0;
-            while ((readLen = fis.read(bufferArr))==packetLen){
+        try (FileInputStream fis = new FileInputStream(inputFile);
+             FileOutputStream fos = new FileOutputStream(outputFile);
+        ) {
+            final int packetLen = 16;
+            byte[] bufferArr = new byte[packetLen];
+            int readLen = 0;
+            while ((readLen = fis.read(bufferArr)) == packetLen) {
                 //write the bytes  in a unit of packetLen
                 fos.write(bufferArr);
             }
             //write the remaining bytes
-            for(int i=0;i<readLen;i++){
+            for (int i = 0; i < readLen; i++) {
                 fos.write(bufferArr[i]);
             }
 
@@ -57,21 +58,20 @@ public class TestInputAndOutput {
 
     @Test
     public void testReadAndWriteText() throws IOException {
-      //Whenever println(not the print like) is called,the data will flush if autoFlush is true
-        try(
-            PrintWriter writer = new PrintWriter(new FileOutputStream("resources/hello2.txt"),true);
-            ){
+        //Whenever println(not the print like) is called,the data will flush if autoFlush is true
+        try (
+                PrintWriter writer = new PrintWriter(new FileOutputStream("resources/hello2.txt"), true);
+        ) {
 
-            for(int i=1;i<=20;i++){
+            for (int i = 1; i <= 20; i++) {
                 writer.print(i);
                 writer.print(",");
-                if(i%5==0){
+                if (i % 5 == 0) {
                     writer.println();
                 }
             }
             writer.flush();//You still need to flush manually when non-println methods are called
         }
-
 
 
         //When dealing with a short text, try Files.readString
@@ -90,15 +90,46 @@ public class TestInputAndOutput {
         //the default delimiter of Scanner is whitespace character,however you can modify it by useDelimiter
         Scanner reader = new Scanner(Path.of("resources/hello2.txt"));
         reader.useDelimiter(",");
-        while (reader.hasNext()){
-            System.out.print(reader.next()+" ");
+        while (reader.hasNext()) {
+            System.out.print(reader.next() + " ");
         }
         System.out.println();
 
         //Returns a stream of delimiter-separated tokens from this scanner.
         //Again,the default delimiter is whitespace character
-        reader =new Scanner(Path.of("resources/hello2.txt"));
+        reader = new Scanner(Path.of("resources/hello2.txt"));
         Stream<String> tokens = reader.useDelimiter(",").tokens();
-        tokens.forEach(ele-> System.out.println(ele+" "));
+        tokens.forEach(ele -> System.out.println(ele + " "));
+    }
+
+
+    @Test
+    public void testDataInputAndOutput() throws IOException {
+        //Note that DataInputStream and DataOutputStream
+        //can not be used directly,you have to pass an FileInputStream
+        //and FileOutputStream accordingly
+        try (
+                DataOutputStream output = new DataOutputStream(new FileOutputStream("resources/data.txt"));
+        ) {
+
+            output.writeDouble(3.14);
+            output.writeChar(' ');
+            output.write(99);
+            output.writeChar(' ');
+            output.writeChar('\n');
+        }
+
+
+        try (DataInputStream input = new DataInputStream(new FileInputStream("resources/data.txt"));
+        ) {
+            System.out.println(input.readDouble());
+            input.readChar();
+            System.out.println(input.read());
+            input.readChar();
+            input.readChar();
+        } catch (EOFException e) {
+            //the file has reached the end,we do nothing here,
+        }
+
     }
 }
